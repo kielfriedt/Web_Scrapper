@@ -1,0 +1,31 @@
+#!/bin/bash -ue
+rm finalLinks finalSB
+touch finalLinks finalSB
+for counter in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  
+do
+        wget http://scratch.mit.edu/channel/surprise -O surprise_${counter}.html
+        start=`grep -n "gallerythumb clearme" surprise_${counter}.html | head -1 | cut -d ":" -f1`
+        end=`grep -n 'gallerythumb clearme' surprise_${counter}.html | tail -1 | cut -d ":" -f1`
+        end=`expr $end + 10`
+        sed -n ${start},${end}p surprise_${counter}.html > temp
+        grep '<a href="/projects/' temp | grep -v img | cut -d '"' -f2 > links
+        paste -d '' template1 links >> finalLinks
+        paste -d '' template1 links > tempLinks
+        paste -d '' tempLinks template2 >> finalSB
+        rm temp tempLinks
+        rm links
+        rm surprise_*.html
+        echo "$counter finished.."
+        cat finalLinks
+        cat finalSB
+        echo "#############################"
+done
+clear
+echo "All links downloaded.."
+echo "---------------------"
+echo "Now downloading all SB"
+sleep 2
+#wget -i finalSB
+echo "---------------------"
+echo "---------------------"
+echo "All downlooad complete"
